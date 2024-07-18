@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -17,14 +15,12 @@ public class Spawner : MonoBehaviour
     private int _poolMaxSize = 8;
     private ObjectPool<Cube> _pool;
 
-    private Vector3 _randomStartPoint => _zeroSpawnPoint.transform.position + new Vector3(0f, 0f, Random.Range(-_shift, _shift));
+    private Vector3 RandomStartPoint => _zeroSpawnPoint.transform.position + new Vector3(0f, 0f, Random.Range(-_shift, _shift));
 
     private void Awake()
     {
         if (Instance == null)
             Instance = this;
-
-        IgnoreObjects();
 
         _pool = new ObjectPool<Cube>(
             createFunc: () => Instantiate(_prefab),
@@ -38,7 +34,7 @@ public class Spawner : MonoBehaviour
 
     private void ActionOnGet(Cube cube)
     {
-        cube.transform.position = _randomStartPoint;
+        cube.transform.position = RandomStartPoint;
         cube.GetComponent<Rigidbody>().velocity = Vector3.zero;
         cube.gameObject.SetActive(true);
     }
@@ -50,16 +46,7 @@ public class Spawner : MonoBehaviour
 
     private void GetCube()
     {
-        _pool.Get().AssignNewLifeTime();
-    }
-
-    private void IgnoreObjects()
-    {
-        foreach (GameObject gameObject in _ignoredObjects)
-        {
-            if (gameObject.GetComponent<Collider>())
-                Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), _prefab.GetComponent<Collider>(), true);
-        }
+        _pool.Get();
     }
 
     public void ReleaseCube(Cube cube)

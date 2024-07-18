@@ -7,65 +7,76 @@ public class Cube : MonoBehaviour
 {
     private readonly float _minLifeTime = 2;
     private readonly float _maxLifeTime = 5;
+    private readonly float delay = 1f;
 
     [SerializeField] private Cube _cubePrefab;
     [SerializeField] private float _currentLifeTime;
 
+    private Coroutine _coroutine;
     private GameObject _colisionBufer;
-
-    private void Update()
+    private Dictionary<string, Color> _colors = new Dictionary<string, Color>()
     {
-        if ((_currentLifeTime -= Time.deltaTime) <= 0)
-            DestroyCube();
-    }
+        { "TopPlatform", Color.green },
+        { "MiddlePlatform", Color.yellow },
+        { "BottomPlatform", Color.red },
+        { "FinishPlatform", Color.white }
+    };
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject == _colisionBufer)
+        if (collision.gameObject == _colisionBufer || _colors.ContainsKey(collision.gameObject.name) == false)
             return;
 
-        AssignNewLifeTime();
+        ChangeColor(collision.gameObject.name);
+        RunLifeCounter();
 
         _colisionBufer = collision.gameObject;
     }
 
-    private void DestroyCube()
+    private void ChangeColor(string key)
     {
-        Spawner.Instance.ReleaseCube(this);
+        GetComponent<Renderer>().material.color = _colors[key];
     }
 
-    public void AssignNewLifeTime()
+    private void RunLifeCounter()
+    {
+        StopCounter();
+        AssignNewLifeTime();
+        StartCounter();
+    }
+
+    private void StopCounter()
+    {
+        if (_coroutine != null)
+            StopCoroutine(_coroutine);
+    }
+
+    private void AssignNewLifeTime()
     {
         _currentLifeTime = Random.Range(_minLifeTime, _maxLifeTime);
     }
+
+    private void StartCounter()
+    {
+        _coroutine = StartCoroutine(CountDown());
+    }
+
+    private IEnumerator CountDown()
+    {
+        var wait = new WaitForSeconds(delay);
+
+        while (_currentLifeTime > 0)
+        {
+            _currentLifeTime--;
+            yield return wait;
+        }
+
+        DestroyCube();
+        StopCounter();
+    }
+
+    private void DestroyCube()
+    {
+        Spawner.Instance.ReleaseCube(this);       
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
