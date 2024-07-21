@@ -147,4 +147,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cubePrefab: {fileID: 9028861566951808648}
-  _spawner: {fileID: 0}
+  _currentLifeTime: 0
+  _platform: {fileID: 0}

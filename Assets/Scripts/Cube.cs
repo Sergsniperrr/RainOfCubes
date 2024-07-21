@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,35 +8,36 @@ public class Cube : MonoBehaviour
 {
     private readonly float _minLifeTime = 2;
     private readonly float _maxLifeTime = 5;
-    private readonly float delay = 1f;
+    private readonly float _delay = 1f;
+    private readonly string _platformTag = "Platform";
 
     [SerializeField] private Cube _cubePrefab;
     [SerializeField] private float _currentLifeTime;
 
     private Coroutine _coroutine;
     private GameObject _colisionBufer;
-    private Dictionary<string, Color> _colors = new Dictionary<string, Color>()
-    {
-        { "TopPlatform", Color.green },
-        { "MiddlePlatform", Color.yellow },
-        { "BottomPlatform", Color.red },
-        { "FinishPlatform", Color.white }
-    };
+    private Color[] _colors = {Color.green, Color.yellow, Color.red, Color.white };
+    private Queue<Color> _colorAssigner = new Queue<Color>();
+
+    public event Action<Cube> Died;
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject == _colisionBufer || _colors.ContainsKey(collision.gameObject.name) == false)
+        if (collision.gameObject == _colisionBufer || !collision.gameObject.transform.CompareTag(_platformTag))
             return;
 
-        ChangeColor(collision.gameObject.name);
+        ChangeColor();
         RunLifeCounter();
 
         _colisionBufer = collision.gameObject;
     }
 
-    private void ChangeColor(string key)
+    private void ChangeColor()
     {
-        GetComponent<Renderer>().material.color = _colors[key];
+        if (_colorAssigner.Count == 0)
+            _colorAssigner = new Queue<Color>(_colors);
+
+        GetComponent<Renderer>().material.color = _colorAssigner.Dequeue();
     }
 
     private void RunLifeCounter()
@@ -53,7 +55,7 @@ public class Cube : MonoBehaviour
 
     private void AssignNewLifeTime()
     {
-        _currentLifeTime = Random.Range(_minLifeTime, _maxLifeTime);
+        _currentLifeTime = UnityEngine.Random.Range(_minLifeTime, _maxLifeTime);
     }
 
     private void StartCounter()
@@ -63,7 +65,7 @@ public class Cube : MonoBehaviour
 
     private IEnumerator CountDown()
     {
-        var wait = new WaitForSeconds(delay);
+        var wait = new WaitForSeconds(_delay);
 
         while (_currentLifeTime > 0)
         {
@@ -71,12 +73,7 @@ public class Cube : MonoBehaviour
             yield return wait;
         }
 
-        DestroyCube();
+        Died(this);
         StopCounter();
-    }
-
-    private void DestroyCube()
-    {
-        Spawner.Instance.ReleaseCube(this);       
     }
 }

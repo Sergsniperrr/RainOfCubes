@@ -3,11 +3,7 @@ using UnityEngine.Pool;
 
 public class Spawner : MonoBehaviour
 {
-    public static Spawner Instance;
-
     [SerializeField] private Cube _prefab;
-    [SerializeField] private GameObject _zeroSpawnPoint;
-    [SerializeField] private GameObject[] _ignoredObjects;
 
     private float _shift = 3f;
     private float _repeateRate = 1f;
@@ -15,13 +11,10 @@ public class Spawner : MonoBehaviour
     private int _poolMaxSize = 8;
     private ObjectPool<Cube> _pool;
 
-    private Vector3 RandomStartPoint => _zeroSpawnPoint.transform.position + new Vector3(0f, 0f, Random.Range(-_shift, _shift));
+    private Vector3 RandomStartPoint => transform.position + new Vector3(0f, 0f, Random.Range(-_shift, _shift));
 
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-
         _pool = new ObjectPool<Cube>(
             createFunc: () => Instantiate(_prefab),
             actionOnGet: (cube) => ActionOnGet(cube),
@@ -46,11 +39,12 @@ public class Spawner : MonoBehaviour
 
     private void GetCube()
     {
-        _pool.Get();
+        _pool.Get().Died += ReleaseCube;
     }
 
-    public void ReleaseCube(Cube cube)
+    private void ReleaseCube(Cube cube)
     {
         _pool.Release(cube);
+        cube.Died -= ReleaseCube;
     }
 }
