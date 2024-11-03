@@ -7,7 +7,6 @@ public class Cube : SpawnableObject
     private CubeView _view;
 
     private readonly float _delay = 1f;
-    private readonly string _platformTag = "Platform";
 
     private Coroutine _coroutine;
     private GameObject _colisionBufer;
@@ -19,10 +18,10 @@ public class Cube : SpawnableObject
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject == _colisionBufer || collision.gameObject.transform.CompareTag(_platformTag) == false)
+        if (collision.gameObject == _colisionBufer || collision.gameObject.TryGetComponent(out Platform platform) == false)
             return;
 
-        _view.ChangeColor();
+        _view.ChangeColor(platform.Color);
         RunLifeCounter();
 
         _colisionBufer = collision.gameObject;
@@ -58,6 +57,6 @@ public class Cube : SpawnableObject
 
         Die();
         StopCounter();
-        _view.UpdateColors();
+        _view.ResetColor();
     }
 }

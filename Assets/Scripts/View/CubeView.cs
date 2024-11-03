@@ -5,24 +5,22 @@ using UnityEngine;
 public class CubeView : MonoBehaviour
 {
     private Renderer _renderer;
-    private Color[] _colors = { Color.green, Color.yellow, Color.red, Color.white };
-    private Queue<Color> _colorAssigner = new Queue<Color>();
 
     private void Awake()
     {
         _renderer = GetComponent<Renderer>();
 
-        UpdateColors();
+        ResetColor();
     }
 
-    public void ChangeColor()
+    public void ChangeColor(Color color)
     {
-        _renderer.material.color = _colorAssigner.Dequeue();
+        _renderer.material.color = color;
     }
 
-    public void UpdateColors()
+    public void ResetColor()
     {
-        _colorAssigner = new Queue<Color>(_colors);
+        ChangeColor(Color.white);
     }
 
 }

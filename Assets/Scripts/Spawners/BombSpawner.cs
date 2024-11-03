@@ -29,7 +29,7 @@ public class BombSpawner : Spawner
     {
         base.ActionOnGet(spawnableObject);
 
-        Bomb bomb = spawnableObject.GetComponent<Bomb>();
-        bomb.Activate();
+        if (spawnableObject.TryGetComponent(out Bomb bomb))
+            bomb.Activate();
     }
 }
