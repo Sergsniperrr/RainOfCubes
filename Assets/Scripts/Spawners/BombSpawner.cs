@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BombSpawner : Spawner
+public class BombSpawner : Spawner<Bomb>
 {
     [SerializeField] private CubeSpawner _cubeSpawner;
 
@@ -25,11 +25,9 @@ public class BombSpawner : Spawner
         GetObject();
     }
 
-    protected override void ActionOnGet(SpawnableObject spawnableObject)
+    protected override void HandleObjectSpawning(Bomb bomb)
     {
-        base.ActionOnGet(spawnableObject);
-
-        if (spawnableObject.TryGetComponent(out Bomb bomb))
-            bomb.Activate();
+        base.HandleObjectSpawning(bomb);
+        bomb.Activate();
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
@@ -13,14 +12,21 @@ public class CubeView : MonoBehaviour
         ResetColor();
     }
 
-    public void ChangeColor(Color color)
+    public void SetRandomColor()
     {
-        _renderer.material.color = color;
+        float minHue = 0;
+        float maxHue = 1;
+        float minSaturation = 1f;
+        float maxSaturation = 1f;
+        float minValue = 1f;
+        float maxValue = 1;
+
+        _renderer.material.color = Random.ColorHSV(minHue, maxHue, minSaturation, maxSaturation, minValue, maxValue);
     }
 
     public void ResetColor()
     {
-        ChangeColor(Color.white);
+        _renderer.material.color = Color.white;
     }
 
 }

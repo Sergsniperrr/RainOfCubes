@@ -2,10 +2,12 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Explosion), typeof(BombView))]
-public class Bomb : SpawnableObject
+public class Bomb : SpawnableObject<Bomb>
 {
     private Explosion _explosion;
     private BombView _view;
+
+    protected override Bomb GetSelf => this;
 
     private void Awake()
     {

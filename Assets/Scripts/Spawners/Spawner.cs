@@ -2,13 +2,13 @@ using System;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public abstract class Spawner : MonoBehaviour
+public abstract class Spawner<T> : MonoBehaviour where T : SpawnableObject<T>
 {
-    [SerializeField] private SpawnableObject _prefab;
+    [SerializeField] private T _prefab;
 
     private int _poolCapacity = 5;
     private int _poolMaxSize = 8;
-    private ObjectPool<SpawnableObject> _pool;
+    private ObjectPool<T> _pool;
 
     public event Action ObjectCreated;
     public event Action ObjectSpawned;
@@ -18,11 +18,11 @@ public abstract class Spawner : MonoBehaviour
 
     private void Awake()
     {
-        _pool = new ObjectPool<SpawnableObject>(
+        _pool = new ObjectPool<T>(
             createFunc: () => Create(),
-            actionOnGet: (spawnableObject) => ActionOnGet(spawnableObject),
+            actionOnGet: (spawnableObject) => HandleObjectSpawning(spawnableObject),
             actionOnRelease: (spawnableObject) => spawnableObject.gameObject.SetActive(false),
-            actionOnDestroy: (spawnableObject) => Destroy(spawnableObject),
+            actionOnDestroy: (spawnableObject) => Destroy(spawnableObject.gameObject),
             collectionCheck: true,
             defaultCapacity: _poolCapacity,
             maxSize: _poolMaxSize);
@@ -33,7 +33,7 @@ public abstract class Spawner : MonoBehaviour
         _pool.Get().Died += ReleaseObject;
     }
 
-    protected virtual void ActionOnGet(SpawnableObject spawnableObject)
+    protected virtual void HandleObjectSpawning(T spawnableObject)
     {
         spawnableObject.transform.position = SpawnPoint;
 
@@ -46,7 +46,7 @@ public abstract class Spawner : MonoBehaviour
         ObjectSpawned?.Invoke();
     }
 
-    protected virtual void ReleaseObject(SpawnableObject spawnableObject)
+    protected virtual void ReleaseObject(T spawnableObject)
     {
         _pool.Release(spawnableObject);
         spawnableObject.Died -= ReleaseObject;
@@ -54,7 +54,7 @@ public abstract class Spawner : MonoBehaviour
         ObjectActiveChanged?.Invoke(false);
     }
 
-    private SpawnableObject Create()
+    private T Create()
     {
         ObjectCreated?.Invoke();
 

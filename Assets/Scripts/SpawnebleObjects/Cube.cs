@@ -2,14 +2,16 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(CubeView))]
-public class Cube : SpawnableObject
+public class Cube : SpawnableObject<Cube>
 {
     private CubeView _view;
 
     private readonly float _delay = 1f;
+    private bool _isCollided;
 
     private Coroutine _coroutine;
-    private GameObject _colisionBufer;
+
+    protected override Cube GetSelf => this;
 
     private void Awake()
     {
@@ -18,13 +20,12 @@ public class Cube : SpawnableObject
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject == _colisionBufer || collision.gameObject.TryGetComponent(out Platform platform) == false)
+        if (_isCollided || collision.gameObject.TryGetComponent(out Platform _) == false)
             return;
 
-        _view.ChangeColor(platform.Color);
+        _view.SetRandomColor();
         RunLifeCounter();
-
-        _colisionBufer = collision.gameObject;
+        _isCollided = true;
     }
 
     private void RunLifeCounter()
@@ -58,5 +59,8 @@ public class Cube : SpawnableObject
         Die();
         StopCounter();
         _view.ResetColor();
+        _isCollided = false;
     }
+
+    //protected override Cube GetSelf() => this;
 }

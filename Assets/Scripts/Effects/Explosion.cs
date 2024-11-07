@@ -4,8 +4,8 @@ public class Explosion : MonoBehaviour
 {
     public void Explode()
     {
-        float force = 300f;
-        float radius = 10f;
+        float force = 400f;
+        float radius = 12f;
         Rigidbody rigidbody;
 
         Collider[] overlappedColliders = Physics.OverlapSphere(transform.position, radius);

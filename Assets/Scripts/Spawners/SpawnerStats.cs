@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
 
-public class SpawnerStats : MonoBehaviour
+public class SpawnerStats<T> : MonoBehaviour where T : SpawnableObject<T>
 {
-    [SerializeField] protected Spawner _spawner;
+    [SerializeField] protected Spawner<T> _spawner;
 
     private int _createdObjectsCounter;
     private int _spawnedObjectsCounter;
