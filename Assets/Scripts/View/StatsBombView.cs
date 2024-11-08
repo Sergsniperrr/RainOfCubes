@@ -1,4 +1,1 @@
-public class StatsBombView : StatsView<Bomb>
-{
-
-}
+public class StatsBombView : StatsView<Bomb> {}

@@ -7,8 +7,6 @@ public class Bomb : SpawnableObject<Bomb>
     private Explosion _explosion;
     private BombView _view;
 
-    protected override Bomb GetSelf => this;
-
     private void Awake()
     {
         _explosion = GetComponent<Explosion>();
@@ -41,7 +39,7 @@ public class Bomb : SpawnableObject<Bomb>
 
         _explosion.Explode();
 
-        Die();
+        Die(this);
         _view.ResetColor();
     }
 }

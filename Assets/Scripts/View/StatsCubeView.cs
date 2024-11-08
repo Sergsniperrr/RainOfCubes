@@ -1,4 +1,1 @@
-public class StatsCubeView : StatsView<Cube>
-{
-
-}
+public class StatsCubeView : StatsView<Cube> {}

@@ -11,8 +11,6 @@ public class Cube : SpawnableObject<Cube>
 
     private Coroutine _coroutine;
 
-    protected override Cube GetSelf => this;
-
     private void Awake()
     {
         _view = GetComponent<CubeView>();
@@ -56,11 +54,9 @@ public class Cube : SpawnableObject<Cube>
             yield return wait;
         }
 
-        Die();
+        Die(this);
         StopCounter();
         _view.ResetColor();
         _isCollided = false;
     }
-
-    //protected override Cube GetSelf() => this;
 }

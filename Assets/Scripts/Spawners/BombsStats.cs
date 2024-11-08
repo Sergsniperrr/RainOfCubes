@@ -1,4 +1,1 @@
-public class BombsStats : SpawnerStats<Bomb>
-{
-
-}
+public class BombsStats : SpawnerStats<Bomb> {}

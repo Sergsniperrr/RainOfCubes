@@ -28,5 +28,4 @@ public class CubeView : MonoBehaviour
     {
         _renderer.material.color = Color.white;
     }
-
 }

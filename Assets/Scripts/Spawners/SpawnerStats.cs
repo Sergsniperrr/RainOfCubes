@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SpawnerStats<T> : MonoBehaviour where T : SpawnableObject<T>
 {
-    [SerializeField] protected Spawner<T> _spawner;
+    [SerializeField] private Spawner<T> _spawner;
 
     private int _createdObjectsCounter;
     private int _spawnedObjectsCounter;
